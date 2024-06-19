@@ -42,7 +42,7 @@ export async function joinGroup(formData: FormData) {
 }
 
 export const leave = async (groupId: string, userId: string) => {
-  const group = await prisma.group.update({
+  await prisma.group.update({
     where: {
       id: groupId,
     },
@@ -54,12 +54,6 @@ export const leave = async (groupId: string, userId: string) => {
     },
   });
   revalidatePath("/home");
-  if (!group.users.length)
-    await prisma.group.delete({
-      where: {
-        id: groupId,
-      },
-    });
 };
 
 export const addExpense = async (formData: FormData) => {
