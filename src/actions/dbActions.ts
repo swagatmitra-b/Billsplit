@@ -166,7 +166,6 @@ export const resolveExpense = async (
 };
 
 export const allYerOwes = async (groupId: string, username: string) => {
-  let paid = 0;
   let amount = 0;
   const getAllExpenses = await prisma.expense.findMany({
     where: {
@@ -181,8 +180,12 @@ export const allYerOwes = async (groupId: string, username: string) => {
       exp.debtors.find((d) => d.debtorId == username) || exp.userId == username
   );
   filteredExpenses.forEach((exp) => {
-    if (exp.userId == username) paid += exp.amount
-    else amount += exp.debtors.find((d) => d.debtorId == username)?.amount as number
+    if (exp.userId == username) {
+      const otherDebtors = exp.debtors.filter((d) => d.debtorId != username);
+      const returnAmount = otherDebtors.reduce((s, d) => s + d.amount, 0)
+      amount += exp.amount - returnAmount
+    }
+    else amount -= exp.debtors.find((d) => d.debtorId == username)?.amount as number
   })
-  return [paid, amount]
+  return amount
 };

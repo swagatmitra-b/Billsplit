@@ -18,7 +18,7 @@ const GroupCard = async () => {
     return (
       <div className="flex justify-center gap-3 flex-wrap">
         {groups.map(async (group) => {
-          const [paid, amount] = await allYerOwes(
+          const amount = await allYerOwes(
             group.id,
             user?.username as string
           );
@@ -37,9 +37,9 @@ const GroupCard = async () => {
                 </CardHeader>
                 <Link href={`/home/${group.id}$${user.id}`}>
                   <CardContent>
-                    {paid > amount
-                      ? `You get ${paid - amount} in total`
-                      : `You owe ${amount - paid} in total`}
+                    {amount > 0
+                      ? `You get ${amount} in total`
+                      : `You owe ${Math.abs(amount)} in total`}
                   </CardContent>
                 </Link>
               </Card>
