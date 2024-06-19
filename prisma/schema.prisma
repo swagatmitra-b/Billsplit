@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       String    @id
+  username     String  @unique
+  password String
+  groups Group[]
+  sessions Session[]
+  expenses Expense[]
+  debts ExpenseDebt[]
+}
+
+model Group {
+  id  String @id
+  name String
+  users User[]
+  expenses Expense[]
+}
+
+model Expense {
+  id Int @id @default(autoincrement())
+  title String
+  amount Float
+  status Boolean
+  createdBy String
+  groupId String 
+  percentages String
+  group Group @relation(references: [id], fields: [groupId])
+  userId String
+  user User @relation(references: [username], fields: [userId])
+  debtors ExpenseDebt[]
+}
+
+model ExpenseDebt {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  expenseId Int
+  settled   Boolean
+  expense   Expense @relation(fields: [expenseId], references: [id])
+  debtorId  String
+  debtor    User     @relation(fields: [debtorId], references: [username])
+  @@unique([expenseId, debtorId])  
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
