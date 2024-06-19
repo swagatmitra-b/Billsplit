@@ -97,7 +97,10 @@ const ExpenseTable = ({
                     <Button
                       variant="outline"
                       disabled={expense.createdBy == userId ? false : true}
-                      onClick={() => deleteExpense(expense.id, path)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteExpense(expense.id, path);
+                      }}
                     >
                       <FaTrash />
                     </Button>

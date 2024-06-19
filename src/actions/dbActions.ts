@@ -49,9 +49,6 @@ export const leave = async (groupId: string, userId: string) => {
     data: {
       users: { disconnect: { id: userId } },
     },
-    include: {
-      users: true,
-    },
   });
   revalidatePath("/home");
 };
