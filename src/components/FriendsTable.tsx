@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -6,17 +7,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getFriendData } from "@/actions/dbActions";
+import { FriendTable } from "@/lib/types";
+import { useState } from "react";
+import FriendsDialog from "./FriendsDialog";
+import { Expense } from "@/lib/types";
 
-const FriendsTable = async ({
-  groupId,
+const FriendsTable = ({
+  getAllFriendData,
   userId,
 }: {
-  groupId: string;
+  getAllFriendData: FriendTable[];
   userId: string;
 }) => {
-  const getAllFriendData = await getFriendData(groupId, userId);
-  console.log(getAllFriendData);
+  const [open, setOpen] = useState<boolean | undefined>(false);
+  const [expenses, setExpenses] = useState<Expense | null>(null);
+  const [friendId, setFriendId] = useState<string>("");
   return (
     <div>
       <Table className="my-2">
@@ -33,10 +38,18 @@ const FriendsTable = async ({
           {getAllFriendData.map((friend) => {
             if (friend.name != userId)
               return (
-                <TableRow>
+                <TableRow
+                  onClick={() => {
+                    setFriendId(friend.name);
+                    setExpenses(friend.involvedExpenses);
+                    setOpen(true);
+                  }}
+                >
                   <TableCell>{friend.name}</TableCell>
-                  <TableCell>{friend.involvedExpenses}</TableCell>
-                  <TableCell>{friend.status ? "Settled" : "Pending"}</TableCell>
+                  <TableCell>{friend.involvedExpenses?.length}</TableCell>
+                  <TableCell>
+                    {friend.status ? "Resolved" : "Pending"}
+                  </TableCell>
                   <TableCell className="text-red-600">
                     {friend.money > 0 ? 0 : Math.abs(friend.money)}
                   </TableCell>
@@ -48,6 +61,13 @@ const FriendsTable = async ({
           })}
         </TableBody>
       </Table>
+      <FriendsDialog
+        open={open}
+        setOpen={setOpen}
+        expenses={expenses}
+        userId={userId}
+        friendId={friendId}
+      />
     </div>
   );
 };

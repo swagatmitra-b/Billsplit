@@ -53,7 +53,7 @@ export type GroupPagePropTypes = {
 
 export type FriendTable = {
   name: string,
-  involvedExpenses: number;
+  involvedExpenses: Expense | null
   status: boolean;
   money: number
 }
