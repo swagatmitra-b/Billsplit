@@ -44,6 +44,7 @@ const FriendsTable = ({
                     setExpenses(friend.involvedExpenses);
                     setOpen(true);
                   }}
+                  key={friend.name}
                 >
                   <TableCell>{friend.name}</TableCell>
                   <TableCell>{friend.involvedExpenses?.length}</TableCell>

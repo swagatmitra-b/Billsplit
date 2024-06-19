@@ -10,7 +10,6 @@ export default async function GroupLayout({
   children: React.ReactNode;
 }) {
   const { user, session } = await validateRequest();
-  console.log(user);
   if (!session) redirect("/");
   return (
     <div className="flex justify-center w-full ">

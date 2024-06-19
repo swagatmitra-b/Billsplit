@@ -42,15 +42,24 @@ export async function joinGroup(formData: FormData) {
 }
 
 export const leave = async (groupId: string, userId: string) => {
-  await prisma.group.update({
+  const group = await prisma.group.update({
     where: {
       id: groupId,
     },
     data: {
       users: { disconnect: { id: userId } },
     },
+    include: {
+      users: true,
+    },
   });
   revalidatePath("/home");
+  if (!group.users.length)
+    await prisma.group.delete({
+      where: {
+        id: groupId,
+      },
+    });
 };
 
 export const addExpense = async (formData: FormData) => {
@@ -60,9 +69,16 @@ export const addExpense = async (formData: FormData) => {
   const userId = formData.get("paidBy") as string;
   const path = formData.get("path") as string;
   const debtors = JSON.parse(formData.get("debtors") as string) as unknown;
-  const percent = JSON.parse(formData.get("percent") as string) as unknown;
+  const percent = JSON.parse(formData.get("percent") as string) as Record<
+    string,
+    string
+  >;
   const type = formData.get("type") as string;
   const createdBy = formData.get("createdBy") as string;
+  if (Object.values(percent).length) {
+    const val = Object.values(percent).reduce((a, v) => a + parseFloat(v), 0);
+    if (val !== 100) return;
+  }
   const expense = await prisma.expense.create({
     data: {
       title,
@@ -251,17 +267,19 @@ export const getFriendData = async (groupId: string, userId: string) => {
       user.involvedExpenses = involvedExpenses;
       user.status = involvedExpenses.every((exp) => exp.status == true);
       user.money = calcOG(involvedExpenses, userId, friend.username);
-      data.push(user)
+      // for (let expense of involvedExpenses)
+      //   console.log(expense.userId, user.name, expense.debtors);
+      data.push(user);
     }
   }
-  return data
+  return data;
 };
 
 function calcOG(expenses: Expense, userId: string, friendId: string) {
   let amount = 0;
   expenses.forEach((exp) => {
     if (exp.userId == userId)
-      amount += exp.debtors.find((d) => (d.debtorId = friendId))
+      amount += exp.debtors.find((d) => (d.debtorId == friendId))
         ?.amount as number;
     else
       amount -= exp.debtors.find((d) => d.debtorId == userId)?.amount as number;

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { validateRequest } from "@/lib/validateReq";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const { session } = await validateRequest();
+  if (session) redirect("/home")
   return (
     <div className="flex flex-col">
       <nav className="flex gap-3 p-4 absolute right-0">

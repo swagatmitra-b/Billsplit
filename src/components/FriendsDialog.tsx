@@ -44,23 +44,27 @@ const FriendsDialog = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses?.map((exp) => (
-                <TableRow>
-                  <TableCell>{exp.title}</TableCell>
-                  <TableCell>{exp.amount}</TableCell>
-                  <TableCell>{exp.status ? "Resolved" : "Pending"}</TableCell>
-                  <TableCell>
-                    {exp.userId == userId
-                      ? 0
-                      : exp.debtors.find((d) => d.debtorId == userId)?.amount}
-                  </TableCell>
-                  <TableCell>
-                    {exp.userId == userId
-                      ? exp.debtors.find((d) => d.debtorId == friendId)?.amount
-                      : 0}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {expenses?.map((exp) => {
+                console.log(exp.userId, userId, exp.title);
+                return (
+                  <TableRow key={exp.id}>
+                    <TableCell>{exp.title}</TableCell>
+                    <TableCell>{exp.amount}</TableCell>
+                    <TableCell>{exp.status ? "Resolved" : "Pending"}</TableCell>
+                    <TableCell>
+                      {exp.userId == userId
+                        ? 0
+                        : exp.debtors.find((d) => d.debtorId == userId)?.amount}
+                    </TableCell>
+                    <TableCell>
+                      {exp.userId == userId
+                        ? exp.debtors.find((d) => d.debtorId == friendId)
+                            ?.amount
+                        : 0}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </DialogContent>
