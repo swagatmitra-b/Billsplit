@@ -182,10 +182,11 @@ export const allYerOwes = async (groupId: string, username: string) => {
   filteredExpenses.forEach((exp) => {
     if (exp.userId == username) {
       const otherDebtors = exp.debtors.filter((d) => d.debtorId != username);
-      const returnAmount = otherDebtors.reduce((s, d) => s + d.amount, 0)
-      amount += exp.amount - returnAmount
-    }
-    else amount -= exp.debtors.find((d) => d.debtorId == username)?.amount as number
-  })
-  return amount
+      const returnAmount = otherDebtors.reduce((s, d) => s + d.amount, 0);
+      amount += returnAmount;
+    } else
+      amount -= exp.debtors.find((d) => d.debtorId == username)
+        ?.amount as number;
+  });
+  return amount;
 };
