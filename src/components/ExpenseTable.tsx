@@ -40,7 +40,7 @@ const ExpenseTable = ({
     );
   else
     return (
-      <div className="my-4">
+      <div className="my-2">
         <Table>
           <TableHeader>
             <TableRow className="text-center">
@@ -77,7 +77,7 @@ const ExpenseTable = ({
                   </TableCell>
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
-                  <TableCell className="text-red-500">
+                  <TableCell className="text-red-600">
                     {debtor
                       ? expense.userId == userId
                         ? 0
@@ -86,7 +86,7 @@ const ExpenseTable = ({
                         : debtor.amount.toFixed(2)
                       : 0}
                   </TableCell>
-                  <TableCell className=" text-green-500">
+                  <TableCell className="text-green-600">
                     {expense.userId == userId
                       ? Number.isInteger(expense.amount)
                         ? expense.amount

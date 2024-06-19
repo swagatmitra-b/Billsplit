@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { randomUUID } from "crypto";
 import { validateRequest } from "@/lib/validateReq";
 import { revalidatePath } from "next/cache";
+import { Expense, FriendTable } from "@/lib/types";
 
 export async function createGroup(formData: FormData) {
   const { user } = await validateRequest();
@@ -190,3 +191,80 @@ export const allYerOwes = async (groupId: string, username: string) => {
   });
   return amount;
 };
+
+export const getFriendData = async (groupId: string, userId: string) => {
+  const data = [];
+  const groupMembers = await prisma.group.findUnique({
+    where: {
+      id: groupId,
+    },
+    include: {
+      users: true,
+    },
+  });
+  if (groupMembers?.users.length) {
+    for (let i = 0; i < groupMembers?.users.length; i++) {
+      const friend = groupMembers.users[i];
+      let user: FriendTable = {
+        name: friend.username,
+        involvedExpenses: 0,
+        status: false,
+        money: 0,
+      };
+      const involvedExpenses = await prisma.expense.findMany({
+        where: {
+          OR: [
+            {
+              AND: [
+                {
+                  userId,
+                },
+                {
+                  debtors: {
+                    some: {
+                      debtorId: friend.username,
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              AND: [
+                {
+                  userId: friend.username,
+                },
+                {
+                  debtors: {
+                    some: {
+                      debtorId: userId,
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: {
+          debtors: true,
+        },
+      });
+      user.involvedExpenses = involvedExpenses.length;
+      user.status = involvedExpenses.every((exp) => exp.status == true);
+      user.money = calcOG(involvedExpenses, userId, friend.username);
+      data.push(user)
+    }
+  }
+  return data
+};
+
+function calcOG(expenses: Expense, userId: string, friendId: string) {
+  let amount = 0;
+  expenses.forEach((exp) => {
+    if (exp.userId == userId)
+      amount += exp.debtors.find((d) => (d.debtorId = friendId))
+        ?.amount as number;
+    else
+      amount -= exp.debtors.find((d) => d.debtorId == userId)?.amount as number;
+  });
+  return amount;
+}

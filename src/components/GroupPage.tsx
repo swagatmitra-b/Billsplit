@@ -1,9 +1,9 @@
-"use client";
-
 import AddExpense from "@/components/AddExpense";
 import ExpenseTable from "@/components/ExpenseTable";
 import { Separator } from "@/components/ui/separator";
 import { GroupPagePropTypes } from "@/lib/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FriendsTable from "./FriendsTable";
 
 const GroupPage = ({
   getAllExpenses,
@@ -15,12 +15,20 @@ const GroupPage = ({
     <div className="flex flex-col gap-3">
       <div className="flex items-center">
         <AddExpense groupId={groupId} members={members} creator={creator} />
-        {/* <h1 className="text-md overflow-hidden text-ellipsis ml-2 px-2">
-          Members - {members.map((m) => m.username).join(",")}
-        </h1> */}
       </div>
-      <Separator className="bg-gray-500"/>
-      <ExpenseTable expenses={getAllExpenses} userId={creator} />
+      <Separator className="bg-gray-500" />
+      <Tabs defaultValue="expenses" className="w-full flex flex-col items-center">
+        <TabsList className="">
+          <TabsTrigger value="expenses">Expenses</TabsTrigger>
+          <TabsTrigger value="friends">Friends</TabsTrigger>
+        </TabsList>
+        <TabsContent value="expenses" className="w-full">
+          <ExpenseTable expenses={getAllExpenses} userId={creator} />
+        </TabsContent>
+        <TabsContent value="friends" className="w-full">
+          <FriendsTable groupId={groupId} userId={creator}/>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

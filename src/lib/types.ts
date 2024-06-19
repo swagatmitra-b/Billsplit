@@ -50,3 +50,10 @@ export type GroupPagePropTypes = {
   }[];
   groupId: string;
 };
+
+export type FriendTable = {
+  name: string,
+  involvedExpenses: number;
+  status: boolean;
+  money: number
+}
