@@ -13,7 +13,6 @@ const GroupPage = async ({
   groupId,
 }: GroupPagePropTypes) => {
   const getAllFriendData = await getFriendData(groupId, creator);
-  console.log(getAllFriendData)
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center">
