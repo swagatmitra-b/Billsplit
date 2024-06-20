@@ -60,7 +60,11 @@ const ExpenseDialog = ({
                   </TableCell>
                   <TableCell>
                     {!Object.keys(percentages).length
-                      ? "50%"
+                      ? `${
+                          Number.isInteger(100 / data.bearers.length)
+                            ? 100 / data.bearers.length
+                            : (100 / data.bearers.length).toFixed(2)
+                        }%`
                       : `${percentages[debtExp.debtorId]}%`}
                   </TableCell>
                   <TableCell>
