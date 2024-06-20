@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -12,8 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Expense } from "@/lib/types";
-import { Dispatch, SetStateAction } from "react";
+import { FriendsDialogType } from "@/lib/types";
 
 const FriendsDialog = ({
   open,
@@ -21,13 +19,7 @@ const FriendsDialog = ({
   expenses,
   userId,
   friendId,
-}: {
-  open: boolean | undefined;
-  setOpen: Dispatch<SetStateAction<boolean | undefined>>;
-  expenses: Expense | null;
-  userId: string;
-  friendId: string;
-}) => {
+}: FriendsDialogType) => {
   return (
     <div>
       <Dialog open={open} onOpenChange={() => setOpen(undefined)}>
@@ -44,27 +36,23 @@ const FriendsDialog = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses?.map((exp) => {
-                console.log(exp.userId, userId, exp.title);
-                return (
-                  <TableRow key={exp.id}>
-                    <TableCell>{exp.title}</TableCell>
-                    <TableCell>{exp.amount}</TableCell>
-                    <TableCell>{exp.status ? "Resolved" : "Pending"}</TableCell>
-                    <TableCell>
-                      {exp.userId == userId
-                        ? 0
-                        : exp.debtors.find((d) => d.debtorId == userId)?.amount}
-                    </TableCell>
-                    <TableCell>
-                      {exp.userId == userId
-                        ? exp.debtors.find((d) => d.debtorId == friendId)
-                            ?.amount
-                        : 0}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {expenses?.map((exp) => (
+                <TableRow key={exp.id}>
+                  <TableCell>{exp.title}</TableCell>
+                  <TableCell>{exp.amount}</TableCell>
+                  <TableCell>{exp.status ? "Resolved" : "Pending"}</TableCell>
+                  <TableCell>
+                    {exp.userId == userId
+                      ? 0
+                      : exp.debtors.find((d) => d.debtorId == userId)?.amount}
+                  </TableCell>
+                  <TableCell>
+                    {exp.userId == userId
+                      ? exp.debtors.find((d) => d.debtorId == friendId)?.amount
+                      : 0}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </DialogContent>

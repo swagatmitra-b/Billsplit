@@ -25,7 +25,6 @@ const ExpenseDialog = ({
   path,
 }: ExpenseDialogPropTypes) => {
   const percentages = JSON.parse(!data.percentages ? `{}` : data.percentages);
-  console.log(percentages);
   return (
     <Dialog open={open} onOpenChange={() => setOpen(undefined)}>
       <DialogTrigger className="hidden"></DialogTrigger>

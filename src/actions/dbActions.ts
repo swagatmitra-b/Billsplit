@@ -258,8 +258,6 @@ export const getFriendData = async (groupId: string, userId: string) => {
       user.involvedExpenses = involvedExpenses;
       user.status = involvedExpenses.every((exp) => exp.status == true);
       user.money = calcOG(involvedExpenses, userId, friend.username);
-      // for (let expense of involvedExpenses)
-      //   console.log(expense.userId, user.name, expense.debtors);
       data.push(user);
     }
   }

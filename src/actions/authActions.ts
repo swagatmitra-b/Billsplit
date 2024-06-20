@@ -12,7 +12,7 @@ export const signup = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const exists = await prisma.user.findUnique({
     where: {
-      username
+      username,
     },
   });
   if (!exists) {
@@ -23,17 +23,14 @@ export const signup = async (formData: FormData) => {
       outputLen: 32,
       parallelism: 1,
     });
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         id: userId,
         username,
         password: hashed,
       },
     });
-    console.log(user);
     return redirect("/login");
-  } else {
-    console.log("exists!");
   }
 };
 
@@ -42,7 +39,7 @@ export async function login(formData: FormData) {
   const password = formData.get("password") as string;
   const exists = await prisma.user.findUnique({
     where: {
-      username
+      username,
     },
   });
   if (exists) {
@@ -52,10 +49,8 @@ export async function login(formData: FormData) {
       outputLen: 32,
       parallelism: 1,
     });
-    if (!validPassword) {
-      console.log("invalid password");
-      return;
-    } else {
+    if (!validPassword) return;
+    else {
       const session = await lucia.createSession(exists.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
@@ -65,22 +60,24 @@ export async function login(formData: FormData) {
       );
       return redirect("/home");
     }
-  } else {
-    console.log("user does not exist");
   }
 }
 
 export const logout = async () => {
-const { session } = await validateRequest();
-	if (!session) {
-		return {
-			error: "Unauthorized"
-		};
-	}
+  const { session } = await validateRequest();
+  if (!session) {
+    return {
+      error: "Unauthorized",
+    };
+  }
 
-	await lucia.invalidateSession(session.id);
+  await lucia.invalidateSession(session.id);
 
-	const sessionCookie = lucia.createBlankSessionCookie();
-	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-	return redirect("/login");
-}
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+  return redirect("/login");
+};

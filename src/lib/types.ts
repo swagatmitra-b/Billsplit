@@ -57,3 +57,11 @@ export type FriendTable = {
   status: boolean;
   money: number
 }
+
+export type FriendsDialogType = {
+  open: boolean | undefined;
+  setOpen: Dispatch<SetStateAction<boolean | undefined>>;
+  expenses: Expense | null;
+  userId: string;
+  friendId: string;
+}
