@@ -13,6 +13,7 @@ const GroupPage = async ({
   groupId,
 }: GroupPagePropTypes) => {
   const getAllFriendData = await getFriendData(groupId, creator);
+  console.log(getAllFriendData)
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center">
@@ -31,7 +32,14 @@ const GroupPage = async ({
           <ExpenseTable expenses={getAllExpenses} userId={creator} />
         </TabsContent>
         <TabsContent value="friends" className="w-full">
-          <FriendsTable getAllFriendData={getAllFriendData} userId={creator} />
+          {getAllFriendData.length > 1 ? (
+            <FriendsTable
+              getAllFriendData={getAllFriendData}
+              userId={creator}
+            />
+          ) : (
+            <h1 className="text-center">There are no other members in this group.</h1>
+          )}
         </TabsContent>
       </Tabs>
     </div>
