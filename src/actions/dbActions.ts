@@ -189,8 +189,9 @@ export const allYerOwes = async (groupId: string, username: string) => {
   );
   filteredExpenses.forEach((exp) => {
     if (exp.userId == username) {
-      const otherDebtors = exp.debtors.filter((d) => d.debtorId != username);
-      const returnAmount = otherDebtors.reduce((s, d) => s + d.amount, 0);
+      const returnAmount = exp.debtors
+        .filter((d) => d.debtorId != username)
+        .reduce((s, d) => s + d.amount, 0);
       amount += returnAmount;
     } else
       amount -= exp.debtors.find((d) => d.debtorId == username)
@@ -268,7 +269,7 @@ function calcOG(expenses: Expense, userId: string, friendId: string) {
   let amount = 0;
   expenses.forEach((exp) => {
     if (exp.userId == userId)
-      amount += exp.debtors.find((d) => (d.debtorId == friendId))
+      amount += exp.debtors.find((d) => d.debtorId == friendId)
         ?.amount as number;
     else
       amount -= exp.debtors.find((d) => d.debtorId == userId)?.amount as number;
